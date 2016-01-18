@@ -38,6 +38,7 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.btnFileLocation = new System.Windows.Forms.Button();
             this.tboxMain = new System.Windows.Forms.RichTextBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // btnGo
@@ -154,6 +155,7 @@
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Button btnFileLocation;
         private System.Windows.Forms.RichTextBox tboxMain;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 

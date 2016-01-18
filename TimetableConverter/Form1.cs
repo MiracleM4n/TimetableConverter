@@ -21,14 +21,21 @@ namespace TimetableConverter
 {
     public partial class Form1 : Form
     {
-        string path;
+        string file;
 
         public Form1()
         {
             InitializeComponent();
 
-            path = System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Desktop\\calendar.ics";
-            txtFileLocation.Text = path;
+            file = System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Desktop\\calendar.ics";
+            txtFileLocation.Text = file;
+
+            // Set Save File Dialog options
+            saveFileDialog1.Filter = "Calendar Files | *.ics, *.vcs";
+            saveFileDialog1.AddExtension = true;
+            saveFileDialog1.InitialDirectory = System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Desktop\\";
+            saveFileDialog1.DefaultExt = "ics";
+            saveFileDialog1.FileName = "calendar.ics";
         }
 
         delegate void SetTextCallback(string text);
@@ -39,19 +46,19 @@ namespace TimetableConverter
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                path = saveFileDialog1.FileName;
-                txtFileLocation.Text = path;
+                file = saveFileDialog1.FileName;
+                txtFileLocation.Text = file;
             }
         }
 
         private void txtFileLocation_TextChanged(object sender, EventArgs e)
         {
-            path = txtFileLocation.Text;
+            file = txtFileLocation.Text;
         }
 
         private void btnGo_Click(object sender, EventArgs e)
         {
-            if (path == null)
+            if (file == null)
             {
                 System.Windows.Forms.MessageBox.Show("You need to select a destination file path first.");
                 return;
