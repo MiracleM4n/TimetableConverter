@@ -105,13 +105,39 @@ namespace TimetableConverter
             this.appendText("Logging in" + Environment.NewLine);
             webClient.FindElement(By.Id("submit-text-search")).Click();
 
-            // Check if login succeeded
-            IReadOnlyCollection<IWebElement> element = webClient.FindElements(By.LinkText("Student schedule by day and time"));
+            // Set Campus based on ComboBox
+            string homeAnchorText;
+            
+            switch ((string) comboBox1.SelectedValue) 
+            {
+                case "Durham College":
+                    homeAnchorText = "DC Home";
+                    break;
+                case "UOIT":
+                    homeAnchorText = "UOIT Home";
+                    break;
+                default:
+                    homeAnchorText = "DC Home";
+                    break;
+            }
 
-            if (!(element.Count > 0))
+            // Search for Campus "Home" Anchor
+            IReadOnlyCollection<IWebElement> homeAnchor = webClient.FindElements(By.LinkText(homeAnchorText));
+
+            // Check if login succeeded based on the "Home" Anchor
+            if (homeAnchor.Count > 0)
+            {
+                // Click Anchor to load Student Information
+                webClient.FindElement(By.LinkText(homeAnchorText)).Click();
+
+                this.appendText("Login successful" + Environment.NewLine);
+            }
+            else
             {
                 // Login unsuccessful
                 this.appendText("Login Unsuccessful!" + Environment.NewLine);
+
+                this.appendText("Webpage: " + webClient.PageSource + Environment.NewLine);
 
                 // Close WebClient
                 this.appendText("Closing WebClient!" + Environment.NewLine);
@@ -121,11 +147,6 @@ namespace TimetableConverter
                 this.setButtonEnabled(true);
 
                 return;
-            }
-            else
-            {
-                // Login successful
-                this.appendText("Login succeesul" + Environment.NewLine);
             }
 
             // Select / Click Timetable Anchor
@@ -414,11 +435,6 @@ namespace TimetableConverter
             {
                 this.btnGo.Enabled = enabled;
             } 
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

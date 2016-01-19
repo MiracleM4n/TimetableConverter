@@ -39,6 +39,8 @@
             this.btnFileLocation = new System.Windows.Forms.Button();
             this.tboxMain = new System.Windows.Forms.RichTextBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.campusLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnGo
@@ -122,11 +124,35 @@
             this.tboxMain.TabIndex = 9;
             this.tboxMain.Text = resources.GetString("tboxMain.Text");
             // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Durham College",
+            "UOIT"});
+            this.comboBox1.Location = new System.Drawing.Point(215, 124);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 10;
+            this.comboBox1.SelectedIndex = 0;
+            // 
+            // campusLabel
+            // 
+            this.campusLabel.AutoSize = true;
+            this.campusLabel.Location = new System.Drawing.Point(212, 108);
+            this.campusLabel.Name = "campusLabel";
+            this.campusLabel.Size = new System.Drawing.Size(48, 13);
+            this.campusLabel.TabIndex = 11;
+            this.campusLabel.Text = "Campus:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(348, 311);
+            this.Controls.Add(this.campusLabel);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.tboxMain);
             this.Controls.Add(this.btnFileLocation);
             this.Controls.Add(this.txtPassword);
@@ -138,7 +164,6 @@
             this.Controls.Add(this.btnGo);
             this.Name = "Form1";
             this.Text = "CalendarScraper";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -156,6 +181,8 @@
         private System.Windows.Forms.Button btnFileLocation;
         private System.Windows.Forms.RichTextBox tboxMain;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label campusLabel;
     }
 }
 
