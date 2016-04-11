@@ -19,11 +19,11 @@ using System.Threading;
 
 namespace TimetableConverter
 {
-    public partial class Form1 : Form
+    public partial class frmTemperatureConversion : Form
     {
         string file;
 
-        public Form1()
+        public frmTemperatureConversion()
         {
             InitializeComponent();
 
@@ -31,11 +31,14 @@ namespace TimetableConverter
             txtFileLocation.Text = file;
 
             // Set Save File Dialog options
-            saveFileDialog1.Filter = "Calendar Files | *.ics, *.vcs";
-            saveFileDialog1.AddExtension = true;
-            saveFileDialog1.InitialDirectory = System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Desktop\\";
-            saveFileDialog1.DefaultExt = "ics";
-            saveFileDialog1.FileName = "calendar.ics";
+            saveFileDialog.Filter = "Calendar Files | *.ics, *.vcs";
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.InitialDirectory = System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Desktop\\";
+            saveFileDialog.DefaultExt = "ics";
+            saveFileDialog.FileName = "calendar.ics";
+
+            // Set default Dropdown Selection
+            cbxCampus.SelectedItem = "Durham College";
         }
 
         delegate void SetTextCallback(string text);
@@ -44,9 +47,9 @@ namespace TimetableConverter
 
         private void btnFileLocation_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                file = saveFileDialog1.FileName;
+                file = saveFileDialog.FileName;
                 txtFileLocation.Text = file;
             }
         }
@@ -64,9 +67,9 @@ namespace TimetableConverter
                 return;
             }
 
-            Thread thread = new Thread(new ThreadStart(() => doWork(tboxMain, txtUsername, txtPassword)));
+            Thread thread = new Thread(new ThreadStart(() => doWork(tbxMain, txtUsername, txtPassword)));
 
-            btnGo.Enabled = false;
+            btnExport.Enabled = false;
 
             // Start the thread
             thread.Start();
@@ -108,7 +111,7 @@ namespace TimetableConverter
             // Set Campus based on ComboBox
             string homeAnchorText;
             
-            switch ((string) comboBox1.SelectedValue) 
+            switch ((string) cbxCampus.SelectedValue) 
             {
                 case "Durham College":
                     homeAnchorText = "DC Home";
@@ -400,41 +403,46 @@ namespace TimetableConverter
 
         private void setText(string text)
         {
-            if (this.tboxMain.InvokeRequired)
+            if (this.tbxMain.InvokeRequired)
             {
                 SetTextCallback d = new SetTextCallback(setText);
                 this.Invoke(d, new object[] { text });
             }
             else
             {
-                this.tboxMain.Text = text;
+                this.tbxMain.Text = text;
             } 
         }
 
         private void appendText(string text)
         {
-            if (this.tboxMain.InvokeRequired)
+            if (this.tbxMain.InvokeRequired)
             {
                 AppendTextCallback d = new AppendTextCallback(appendText);
                 this.Invoke(d, new object[] { text });
             }
             else
             {
-                this.tboxMain.AppendText(text);
+                this.tbxMain.AppendText(text);
             } 
         }
 
         private void setButtonEnabled(bool enabled)
         {
-            if (this.btnGo.InvokeRequired)
+            if (this.btnExport.InvokeRequired)
             {
                 ButtonEnableCallback d = new ButtonEnableCallback(setButtonEnabled);
                 this.Invoke(d, new object[] { enabled });
             }
             else
             {
-                this.btnGo.Enabled = enabled;
+                this.btnExport.Enabled = enabled;
             } 
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }
