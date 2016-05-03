@@ -38,7 +38,7 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.btnFileLocation = new System.Windows.Forms.Button();
-            this.tbxMain = new System.Windows.Forms.RichTextBox();
+            this.tbxMain = new System.Windows.Forms.TextBox();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.cbxCampus = new System.Windows.Forms.ComboBox();
             this.lblCampus = new System.Windows.Forms.Label();
@@ -121,10 +121,12 @@
             // 
             // tbxMain
             // 
+            this.tbxMain.Enabled = false;
             this.tbxMain.Location = new System.Drawing.Point(12, 10);
+            this.tbxMain.Multiline = true;
             this.tbxMain.Name = "tbxMain";
             this.tbxMain.ReadOnly = true;
-            this.tbxMain.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.tbxMain.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbxMain.Size = new System.Drawing.Size(324, 96);
             this.tbxMain.TabIndex = 1;
             this.tbxMain.Text = resources.GetString("tbxMain.Text");
@@ -189,7 +191,7 @@
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Button btnFileLocation;
-        private System.Windows.Forms.RichTextBox tbxMain;
+        private System.Windows.Forms.TextBox tbxMain;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.ComboBox cbxCampus;
         private System.Windows.Forms.Label lblCampus;

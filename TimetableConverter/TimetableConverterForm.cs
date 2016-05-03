@@ -78,7 +78,7 @@ namespace TimetableConverter
             thread.Start();
         }
 
-        private void doWork(RichTextBox tboxMain, TextBox user, TextBox password)
+        private void doWork(TextBox tboxMain, TextBox user, TextBox password)
         {
             DriverService srvc;
             RemoteWebDriver webClient;
@@ -461,11 +461,6 @@ namespace TimetableConverter
             {
                 this.btnExport.Enabled = enabled;
             }
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true;
         }
 
         private string getCampusSelection()
