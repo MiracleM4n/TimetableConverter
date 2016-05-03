@@ -79,20 +79,20 @@ namespace TimetableConverter
         private void doWork(RichTextBox tboxMain, TextBox user, TextBox password)
         {
             // Set WebClient options
-            ChromeDriverService srvc = ChromeDriverService.CreateDefaultService();
+            PhantomJSDriverService srvc = PhantomJSDriverService.CreateDefaultService();
             srvc.HideCommandPromptWindow = true;
 
-            //PhantomJSOptions opts = new PhantomJSOptions();
-            //opts.AddAdditionalCapability("web-security", false);
-            //opts.AddAdditionalCapability("ssl-protocol", "any");
-            //opts.AddAdditionalCapability("ignore-ssl-errors", true);
-            //opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
+            PhantomJSOptions opts = new PhantomJSOptions();
+            opts.AddAdditionalCapability("web-security", false);
+            opts.AddAdditionalCapability("ssl-protocol", "any");
+            opts.AddAdditionalCapability("ignore-ssl-errors", true);
+            opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
 
             // Initialize WebClient
 
             this.setText("Starting WebClient" + Environment.NewLine);
 
-            ChromeDriver webClient = new ChromeDriver(srvc);//, opts);
+            PhantomJSDriver webClient = new PhantomJSDriver(srvc, opts);
             webClient.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 10));
 
 
