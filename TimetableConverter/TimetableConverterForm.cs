@@ -23,6 +23,8 @@ namespace TimetableConverter
     {
         string file;
 
+        bool debug = false;
+
         public frmTemperatureConversion()
         {
             InitializeComponent();
@@ -78,23 +80,39 @@ namespace TimetableConverter
 
         private void doWork(RichTextBox tboxMain, TextBox user, TextBox password)
         {
-            // Set WebClient options
-            PhantomJSDriverService srvc = PhantomJSDriverService.CreateDefaultService();
-            srvc.HideCommandPromptWindow = true;
+            DriverService srvc;
+            RemoteWebDriver webClient;
 
-            PhantomJSOptions opts = new PhantomJSOptions();
-            opts.AddAdditionalCapability("web-security", false);
-            opts.AddAdditionalCapability("ssl-protocol", "any");
-            opts.AddAdditionalCapability("ignore-ssl-errors", true);
-            opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
+            // Debug mode
+            if (debug)
+            {
+                // Set WebClient Service options
+                srvc = ChromeDriverService.CreateDefaultService();
+                srvc.HideCommandPromptWindow = true;
 
-            // Initialize WebClient
+                // Initialize WebClient
+                this.setText("Starting WebClient" + Environment.NewLine);
+                webClient = new ChromeDriver((ChromeDriverService)srvc);
+            }
+            else
+            {
+                // Set WebClient Service options
+                srvc = PhantomJSDriverService.CreateDefaultService();
+                srvc.HideCommandPromptWindow = true;
 
-            this.setText("Starting WebClient" + Environment.NewLine);
+                // Set WebClient options
+                PhantomJSOptions opts = new PhantomJSOptions();
+                opts.AddAdditionalCapability("web-security", false);
+                opts.AddAdditionalCapability("ssl-protocol", "any");
+                opts.AddAdditionalCapability("ignore-ssl-errors", true);
+                opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
 
-            PhantomJSDriver webClient = new PhantomJSDriver(srvc, opts);
+                // Initialize WebClient
+                this.setText("Starting WebClient" + Environment.NewLine);
+                webClient = new PhantomJSDriver((PhantomJSDriverService)srvc, opts);
+            }
+
             webClient.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 10));
-
 
             // Open DC MyCampus login page
             this.appendText("Loading MyCampus login page" + Environment.NewLine);
@@ -111,8 +129,8 @@ namespace TimetableConverter
 
             // Set Campus based on ComboBox
             string homeAnchorText;
-            
-            switch (getCampusSelection()) 
+
+            switch (this.getCampusSelection())
             {
                 case "Durham College":
                     homeAnchorText = "DC Home";
@@ -368,7 +386,7 @@ namespace TimetableConverter
             }
 
             // Write calendar to file
-            this.appendText(ical.Calendar.Events.Count + " events being written to file" + Environment.NewLine + "'" + txtFileLocation.Text +  "'" + Environment.NewLine);
+            this.appendText(ical.Calendar.Events.Count + " events being written to file" + Environment.NewLine + "'" + txtFileLocation.Text + "'" + Environment.NewLine);
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.Serialize(ical, txtFileLocation.Text);
 
@@ -380,10 +398,10 @@ namespace TimetableConverter
             this.setButtonEnabled(true);
         }
 
-        
+
         // Add event to provided calendar
         // Requires event start and end dates, event description and event title/summary
-        private void addEventToCalendar(iCalendar ical, DateTime startDate, DateTime endDate, string description, string title) 
+        private void addEventToCalendar(iCalendar ical, DateTime startDate, DateTime endDate, string description, string title)
         {
             // Create a blank event with default settings
             Event evt = ical.Create<Event>();
@@ -416,7 +434,7 @@ namespace TimetableConverter
             else
             {
                 this.tbxMain.Text = text;
-            } 
+            }
         }
 
         private void appendText(string text)
@@ -429,7 +447,7 @@ namespace TimetableConverter
             else
             {
                 this.tbxMain.AppendText(text);
-            } 
+            }
         }
 
         private void setButtonEnabled(bool enabled)
@@ -442,7 +460,7 @@ namespace TimetableConverter
             else
             {
                 this.btnExport.Enabled = enabled;
-            } 
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -455,12 +473,12 @@ namespace TimetableConverter
             if (this.cbxCampus.InvokeRequired)
             {
                 CampusSelection d = new CampusSelection(getCampusSelection);
-                return (string) this.Invoke(d);
+                return (string)this.Invoke(d);
             }
             else
             {
-                return (string) cbxCampus.SelectedValue;
-            } 
+                return (string)cbxCampus.SelectedValue;
+            }
         }
     }
 }
