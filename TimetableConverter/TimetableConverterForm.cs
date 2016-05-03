@@ -44,6 +44,7 @@ namespace TimetableConverter
         delegate void SetTextCallback(string text);
         delegate void AppendTextCallback(string text);
         delegate void ButtonEnableCallback(bool enabled);
+        delegate string CampusSelection();
 
         private void btnFileLocation_Click(object sender, EventArgs e)
         {
@@ -78,20 +79,20 @@ namespace TimetableConverter
         private void doWork(RichTextBox tboxMain, TextBox user, TextBox password)
         {
             // Set WebClient options
-            PhantomJSDriverService srvc = PhantomJSDriverService.CreateDefaultService();
+            ChromeDriverService srvc = ChromeDriverService.CreateDefaultService();
             srvc.HideCommandPromptWindow = true;
 
-            PhantomJSOptions opts = new PhantomJSOptions();
-            opts.AddAdditionalCapability("web-security", false);
-            opts.AddAdditionalCapability("ssl-protocol", "any");
-            opts.AddAdditionalCapability("ignore-ssl-errors", true);
-            opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
+            //PhantomJSOptions opts = new PhantomJSOptions();
+            //opts.AddAdditionalCapability("web-security", false);
+            //opts.AddAdditionalCapability("ssl-protocol", "any");
+            //opts.AddAdditionalCapability("ignore-ssl-errors", true);
+            //opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
 
             // Initialize WebClient
 
             this.setText("Starting WebClient" + Environment.NewLine);
 
-            PhantomJSDriver webClient = new PhantomJSDriver(srvc, opts);
+            ChromeDriver webClient = new ChromeDriver(srvc);//, opts);
             webClient.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 10));
 
 
@@ -111,7 +112,7 @@ namespace TimetableConverter
             // Set Campus based on ComboBox
             string homeAnchorText;
             
-            switch ((string) cbxCampus.SelectedValue) 
+            switch (getCampusSelection()) 
             {
                 case "Durham College":
                     homeAnchorText = "DC Home";
@@ -157,8 +158,12 @@ namespace TimetableConverter
             webClient.FindElement(By.LinkText("Student schedule by day and time")).Click();
 
             // Select Timetable IFrame
-            this.appendText("Switch to Timetable IFrame" + Environment.NewLine);
+            this.appendText("Switch to Content IFrame" + Environment.NewLine);
             webClient.SwitchTo().Frame("content");
+
+            // Select / Click Second Timetable Anchor 
+            this.appendText("Clicking Second 'Student schedule' link" + Environment.NewLine);
+            webClient.FindElement(By.PartialLinkText("Student Schedule")).Click();
 
             // Create empty Calendar with default settings
             this.appendText("Initialize blank ICalendar" + Environment.NewLine);
@@ -393,7 +398,7 @@ namespace TimetableConverter
             // Set event description
             evt.Description = description;
             // Set event location
-            evt.Location = "Durham College, Oshawa, ON, Canada";
+            evt.Location = getCampusSelection() + ", Oshawa, ON, Canada";
 
             // Create and set UUID for event
             Guid uuid = System.Guid.NewGuid();
@@ -443,6 +448,19 @@ namespace TimetableConverter
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
+        }
+
+        private string getCampusSelection()
+        {
+            if (this.cbxCampus.InvokeRequired)
+            {
+                CampusSelection d = new CampusSelection(getCampusSelection);
+                return (string) this.Invoke(d);
+            }
+            else
+            {
+                return (string) cbxCampus.SelectedValue;
+            } 
         }
     }
 }

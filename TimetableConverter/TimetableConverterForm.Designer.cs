@@ -61,7 +61,7 @@
             this.lblUsername.Location = new System.Drawing.Point(9, 109);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(58, 13);
-            this.lblUsername.TabIndex = 1;
+            this.lblUsername.TabIndex = 2;
             this.lblUsername.Text = "&Username:";
             // 
             // lblPassword
@@ -70,7 +70,7 @@
             this.lblPassword.Location = new System.Drawing.Point(12, 148);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(56, 13);
-            this.lblPassword.TabIndex = 5;
+            this.lblPassword.TabIndex = 4;
             this.lblPassword.Text = "&Password:";
             // 
             // lblFileLocation
@@ -97,7 +97,7 @@
             this.txtUsername.Location = new System.Drawing.Point(12, 125);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(136, 20);
-            this.txtUsername.TabIndex = 2;
+            this.txtUsername.TabIndex = 3;
             this.TimetableConversionTips.SetToolTip(this.txtUsername, "Username / Student ID for MyCampus.");
             // 
             // txtPassword
@@ -106,7 +106,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(136, 20);
-            this.txtPassword.TabIndex = 6;
+            this.txtPassword.TabIndex = 5;
             this.TimetableConversionTips.SetToolTip(this.txtPassword, "Password used for MyCampus.");
             // 
             // btnFileLocation
@@ -126,7 +126,7 @@
             this.tbxMain.ReadOnly = true;
             this.tbxMain.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.tbxMain.Size = new System.Drawing.Size(324, 96);
-            this.tbxMain.TabIndex = 9;
+            this.tbxMain.TabIndex = 1;
             this.tbxMain.Text = resources.GetString("tbxMain.Text");
             this.TimetableConversionTips.SetToolTip(this.tbxMain, "Output textbox.");
             // 
@@ -140,7 +140,7 @@
             this.cbxCampus.Location = new System.Drawing.Point(215, 124);
             this.cbxCampus.Name = "cbxCampus";
             this.cbxCampus.Size = new System.Drawing.Size(121, 21);
-            this.cbxCampus.TabIndex = 4;
+            this.cbxCampus.TabIndex = 7;
             this.TimetableConversionTips.SetToolTip(this.cbxCampus, "Dropdown for Campus / School to scrape from.");
             // 
             // lblCampus
@@ -149,7 +149,7 @@
             this.lblCampus.Location = new System.Drawing.Point(212, 108);
             this.lblCampus.Name = "lblCampus";
             this.lblCampus.Size = new System.Drawing.Size(48, 13);
-            this.lblCampus.TabIndex = 3;
+            this.lblCampus.TabIndex = 6;
             this.lblCampus.Text = "&Campus:";
             // 
             // frmTemperatureConversion
@@ -169,6 +169,8 @@
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblUsername);
             this.Controls.Add(this.btnExport);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "frmTemperatureConversion";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Timetable Converter Form";
