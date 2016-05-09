@@ -58,76 +58,76 @@
             // lblUsername
             // 
             this.lblUsername.AutoSize = true;
-            this.lblUsername.Location = new System.Drawing.Point(9, 109);
+            this.lblUsername.Location = new System.Drawing.Point(9, 8);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(58, 13);
-            this.lblUsername.TabIndex = 2;
+            this.lblUsername.TabIndex = 0;
             this.lblUsername.Text = "&Username:";
             // 
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(12, 148);
+            this.lblPassword.Location = new System.Drawing.Point(12, 47);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(56, 13);
-            this.lblPassword.TabIndex = 4;
+            this.lblPassword.TabIndex = 2;
             this.lblPassword.Text = "&Password:";
             // 
             // lblFileLocation
             // 
             this.lblFileLocation.AutoSize = true;
-            this.lblFileLocation.Location = new System.Drawing.Point(12, 197);
+            this.lblFileLocation.Location = new System.Drawing.Point(12, 96);
             this.lblFileLocation.Name = "lblFileLocation";
             this.lblFileLocation.Size = new System.Drawing.Size(66, 13);
-            this.lblFileLocation.TabIndex = 7;
+            this.lblFileLocation.TabIndex = 6;
             this.lblFileLocation.Text = "&File location:";
             // 
             // txtFileLocation
             // 
-            this.txtFileLocation.Location = new System.Drawing.Point(12, 213);
+            this.txtFileLocation.Location = new System.Drawing.Point(12, 112);
             this.txtFileLocation.Name = "txtFileLocation";
             this.txtFileLocation.ReadOnly = true;
             this.txtFileLocation.Size = new System.Drawing.Size(230, 20);
-            this.txtFileLocation.TabIndex = 8;
+            this.txtFileLocation.TabIndex = 7;
             this.TimetableConversionTips.SetToolTip(this.txtFileLocation, "Location of file where the calendar will be exported too.");
             this.txtFileLocation.TextChanged += new System.EventHandler(this.txtFileLocation_TextChanged);
             // 
             // txtUsername
             // 
-            this.txtUsername.Location = new System.Drawing.Point(12, 125);
+            this.txtUsername.Location = new System.Drawing.Point(12, 24);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(136, 20);
-            this.txtUsername.TabIndex = 3;
+            this.txtUsername.TabIndex = 1;
             this.TimetableConversionTips.SetToolTip(this.txtUsername, "Username / Student ID for MyCampus.");
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(12, 164);
+            this.txtPassword.Location = new System.Drawing.Point(12, 63);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(136, 20);
-            this.txtPassword.TabIndex = 5;
+            this.txtPassword.TabIndex = 3;
             this.TimetableConversionTips.SetToolTip(this.txtPassword, "Password used for MyCampus.");
             // 
             // btnFileLocation
             // 
-            this.btnFileLocation.Location = new System.Drawing.Point(248, 213);
+            this.btnFileLocation.Location = new System.Drawing.Point(248, 112);
             this.btnFileLocation.Name = "btnFileLocation";
             this.btnFileLocation.Size = new System.Drawing.Size(24, 20);
-            this.btnFileLocation.TabIndex = 9;
+            this.btnFileLocation.TabIndex = 8;
             this.btnFileLocation.Text = "...";
             this.btnFileLocation.UseVisualStyleBackColor = true;
             this.btnFileLocation.Click += new System.EventHandler(this.btnFileLocation_Click);
             // 
             // tbxMain
             // 
-            this.tbxMain.Location = new System.Drawing.Point(12, 10);
+            this.tbxMain.Location = new System.Drawing.Point(12, 138);
             this.tbxMain.Multiline = true;
             this.tbxMain.Name = "tbxMain";
             this.tbxMain.ReadOnly = true;
             this.tbxMain.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbxMain.Size = new System.Drawing.Size(324, 96);
-            this.tbxMain.TabIndex = 1;
+            this.tbxMain.TabIndex = 9;
             this.tbxMain.Text = resources.GetString("tbxMain.Text");
             this.TimetableConversionTips.SetToolTip(this.tbxMain, "Output textbox.");
             // 
@@ -138,19 +138,19 @@
             this.cbxCampus.Items.AddRange(new object[] {
             "Durham College",
             "UOIT"});
-            this.cbxCampus.Location = new System.Drawing.Point(215, 124);
+            this.cbxCampus.Location = new System.Drawing.Point(215, 23);
             this.cbxCampus.Name = "cbxCampus";
             this.cbxCampus.Size = new System.Drawing.Size(121, 21);
-            this.cbxCampus.TabIndex = 7;
+            this.cbxCampus.TabIndex = 5;
             this.TimetableConversionTips.SetToolTip(this.cbxCampus, "Dropdown for Campus / School to scrape from.");
             // 
             // lblCampus
             // 
             this.lblCampus.AutoSize = true;
-            this.lblCampus.Location = new System.Drawing.Point(212, 108);
+            this.lblCampus.Location = new System.Drawing.Point(212, 7);
             this.lblCampus.Name = "lblCampus";
             this.lblCampus.Size = new System.Drawing.Size(48, 13);
-            this.lblCampus.TabIndex = 6;
+            this.lblCampus.TabIndex = 4;
             this.lblCampus.Text = "&Campus:";
             // 
             // frmTemperatureConversion
