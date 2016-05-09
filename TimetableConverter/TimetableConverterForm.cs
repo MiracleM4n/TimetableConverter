@@ -130,7 +130,7 @@ namespace TimetableConverter
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnGo_Click(object sender, EventArgs e)
+        private void btnExport_Click(object sender, EventArgs e)
         {
             // Checks if the user has set a output file
             if (file == null)

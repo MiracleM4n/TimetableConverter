@@ -53,7 +53,7 @@
             this.btnExport.TabIndex = 10;
             this.btnExport.Text = "&Export my Calendar!";
             this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.btnGo_Click);
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
             // lblUsername
             // 
