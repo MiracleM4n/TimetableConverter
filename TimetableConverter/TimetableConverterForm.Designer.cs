@@ -176,6 +176,7 @@
             this.Name = "frmTemperatureConversion";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Timetable Converter Form";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmTemperatureConversion_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

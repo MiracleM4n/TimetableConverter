@@ -21,6 +21,11 @@ namespace TimetableConverter
 {
     public partial class frmTemperatureConversion : Form
     {
+        DriverService srvc;
+        RemoteWebDriver webClient;
+
+        Thread thread;
+
         string file;
 
         bool debug = false;
@@ -29,6 +34,7 @@ namespace TimetableConverter
         {
             InitializeComponent();
 
+            // Set Default File Location
             file = System.Environment.GetEnvironmentVariable("USERPROFILE") + "\\Desktop\\calendar.ics";
             txtFileLocation.Text = file;
 
@@ -43,6 +49,7 @@ namespace TimetableConverter
             cbxCampus.SelectedItem = "Durham College";
         }
 
+        // Declare Async Methods
         delegate void SetTextCallback(string text);
         delegate void AppendTextCallback(string text);
         delegate void ButtonEnableCallback(bool enabled);
@@ -70,9 +77,12 @@ namespace TimetableConverter
                 return;
             }
 
-            Thread thread = new Thread(new ThreadStart(() => doWork(tbxMain, txtUsername, txtPassword)));
+            thread = new Thread(new ThreadStart(() => doWork(tbxMain, txtUsername, txtPassword)));
 
             btnExport.Enabled = false;
+
+            // Close thread when Application is closed
+            thread.IsBackground = true;
 
             // Start the thread
             thread.Start();
@@ -80,9 +90,6 @@ namespace TimetableConverter
 
         private void doWork(TextBox tboxMain, TextBox user, TextBox password)
         {
-            DriverService srvc;
-            RemoteWebDriver webClient;
-
             // Debug mode
             if (debug)
             {
@@ -473,6 +480,19 @@ namespace TimetableConverter
             else
             {
                 return (string)cbxCampus.SelectedValue;
+            }
+        }
+
+        private void frmTemperatureConversion_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (this.thread != null && this.thread.IsAlive)
+            {
+                thread.Abort();
+            }
+
+            if (this.webClient != null)
+            {
+                webClient.Quit();
             }
         }
     }
