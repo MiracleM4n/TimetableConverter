@@ -19,7 +19,7 @@ using System.Threading;
 
 namespace TimetableConverter
 {
-    public partial class frmTemperatureConversion : Form
+    public partial class frmTimetableConverter : Form
     {
         /*
          * 
@@ -52,7 +52,7 @@ namespace TimetableConverter
         /// <summary>
         /// Form Initializer
         /// </summary>
-        public frmTemperatureConversion()
+        public frmTimetableConverter()
         {
             InitializeComponent();
 
@@ -548,6 +548,7 @@ namespace TimetableConverter
             string uuidValue = uuid.ToString().Replace("-", "").Substring(0, 26) + "@durhamcollege.ca";
             evt.UID = uuidValue;
         }
+
 
 
         /*
