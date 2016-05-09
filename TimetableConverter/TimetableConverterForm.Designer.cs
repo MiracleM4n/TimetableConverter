@@ -121,7 +121,6 @@
             // 
             // tbxMain
             // 
-            this.tbxMain.Enabled = false;
             this.tbxMain.Location = new System.Drawing.Point(12, 10);
             this.tbxMain.Multiline = true;
             this.tbxMain.Name = "tbxMain";

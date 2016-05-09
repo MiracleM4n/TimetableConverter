@@ -192,6 +192,17 @@ namespace TimetableConverter
         /// </summary>
         private void doWork()
         {
+            // Clear output window
+            this.setText("");
+
+            // Check if the webClient has already been initialized
+            if (this.webClient != null)
+            {
+                // If so close WebClient
+                this.appendText("Closing WebClient!" + Environment.NewLine);
+                webClient.Quit();
+            }
+
             // Checks if Debug mode boolean is set
             if (debug)
             {
@@ -202,7 +213,7 @@ namespace TimetableConverter
                 srvc.HideCommandPromptWindow = true;
 
                 // Initialize WebClient
-                this.setText("Starting WebClient" + Environment.NewLine);
+                this.appendText("Starting WebClient" + Environment.NewLine);
                 webClient = new ChromeDriver((ChromeDriverService)srvc);
             }
             else
@@ -221,7 +232,7 @@ namespace TimetableConverter
                 opts.AddAdditionalCapability("webdriver-loglevel", "DEBUG");
 
                 // Initialize WebClient
-                this.setText("Starting WebClient" + Environment.NewLine);
+                this.appendText("Starting WebClient" + Environment.NewLine);
                 webClient = new PhantomJSDriver((PhantomJSDriverService)srvc, opts);
             }
 
@@ -272,12 +283,6 @@ namespace TimetableConverter
             {
                 // Login unsuccessful
                 this.appendText("Login Unsuccessful!" + Environment.NewLine);
-
-                this.appendText("Webpage: " + webClient.PageSource + Environment.NewLine);
-
-                // Close WebClient
-                this.appendText("Closing WebClient!" + Environment.NewLine);
-                webClient.Quit();
 
                 // Enable go button
                 this.setButtonEnabled(true);
