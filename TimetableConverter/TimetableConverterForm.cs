@@ -21,15 +21,37 @@ namespace TimetableConverter
 {
     public partial class frmTemperatureConversion : Form
     {
-        DriverService srvc;
-        RemoteWebDriver webClient;
+        /*
+         * 
+         * CLASS DECLARATIONS
+         * 
+         */
 
+        // Declare WebClient / Service
+        RemoteWebDriver webClient;
+        DriverService srvc;
+
+        // Delcare work Thread
         Thread thread;
 
+        // Declare File to save output to
         string file;
 
+        // Declare debugging boolean
         bool debug = false;
 
+
+
+        /*
+         * 
+         * INITIALIZE
+         * 
+         */
+
+
+        /// <summary>
+        /// Form Initializer
+        /// </summary>
         public frmTemperatureConversion()
         {
             InitializeComponent();
@@ -49,50 +71,132 @@ namespace TimetableConverter
             cbxCampus.SelectedItem = "Durham College";
         }
 
+
+
+        /*
+         * 
+         * ASYNC METHOD DECLARATION
+         * 
+         */
+
+
         // Declare Async Methods
         delegate void SetTextCallback(string text);
         delegate void AppendTextCallback(string text);
         delegate void ButtonEnableCallback(bool enabled);
         delegate string CampusSelection();
 
+
+
+        /*
+         * 
+         * EVENTS
+         * 
+         */
+
+
+        /// <summary>
+        /// Event Fired when output file location button is clicked
+        /// Sets output file location and file name when the user clicks "Ok"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnFileLocation_Click(object sender, EventArgs e)
         {
+            // When the user clicks Ok on the file location dialog
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
+                // Set file variable to the filename
                 file = saveFileDialog.FileName;
+                // Set the file location textbox to the file
                 txtFileLocation.Text = file;
             }
         }
 
+        /// <summary>
+        /// Fires when text is changed in the file location textbox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void txtFileLocation_TextChanged(object sender, EventArgs e)
         {
+            // Set the file to the next file location text
             file = txtFileLocation.Text;
         }
 
+        /// <summary>
+        /// Fires when the "Go" button is clicked
+        /// Does validation than starts the "Work" Thread
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnGo_Click(object sender, EventArgs e)
         {
+            // Checks if the user has set a output file
             if (file == null)
             {
+                // If not prompt the user to enter one
                 System.Windows.Forms.MessageBox.Show("You need to select a destination file path first.");
+                // return (Don't start "Work" Thread)
                 return;
             }
 
-            thread = new Thread(new ThreadStart(() => doWork(tbxMain, txtUsername, txtPassword)));
+            // Define the thread variable using a new Thread from current user input
+            thread = new Thread(new ThreadStart(() => doWork()));
 
+            // Disable the output button until "Work" Thread is complete
             btnExport.Enabled = false;
 
-            // Close thread when Application is closed
+            // Run the Thread in the background
             thread.IsBackground = true;
 
             // Start the thread
             thread.Start();
         }
 
-        private void doWork(TextBox tboxMain, TextBox user, TextBox password)
+        /// <summary>
+        /// Fires when Form is Closed
+        /// Aborts Thead / Quits WebClient
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void frmTemperatureConversion_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // Debug mode
+            // Check if the thread has been initialized and is currently running
+            if (this.thread != null && this.thread.IsAlive)
+            {
+                // Abort the thread if so
+                thread.Abort();
+            }
+
+            // Check if the webClient has been initialized
+            if (this.webClient != null)
+            {
+                // If so Quit it (Close it)
+                webClient.Quit();
+            }
+        }
+
+
+
+        /*
+         * 
+         * METHODS
+         * 
+         */
+
+
+        /// <summary>
+        /// Main "Work" Thread
+        /// Does all scraping work. To be used in another Thread to prevent Form locking.
+        /// </summary>
+        private void doWork()
+        {
+            // Checks if Debug mode boolean is set
             if (debug)
             {
+                // Set Debug WebClient if so
+
                 // Set WebClient Service options
                 srvc = ChromeDriverService.CreateDefaultService();
                 srvc.HideCommandPromptWindow = true;
@@ -103,6 +207,8 @@ namespace TimetableConverter
             }
             else
             {
+                // Set Regular WebClient if not
+
                 // Set WebClient Service options
                 srvc = PhantomJSDriverService.CreateDefaultService();
                 srvc.HideCommandPromptWindow = true;
@@ -119,6 +225,7 @@ namespace TimetableConverter
                 webClient = new PhantomJSDriver((PhantomJSDriverService)srvc, opts);
             }
 
+            // Set WebClient pag load timeout to 10 seconds
             webClient.Manage().Timeouts().SetPageLoadTimeout(new TimeSpan(0, 0, 10));
 
             // Open DC MyCampus login page
@@ -175,6 +282,7 @@ namespace TimetableConverter
                 // Enable go button
                 this.setButtonEnabled(true);
 
+                // End Thread
                 return;
             }
 
@@ -405,9 +513,14 @@ namespace TimetableConverter
             this.setButtonEnabled(true);
         }
 
-
+        /// <summary>
         // Add event to provided calendar
-        // Requires event start and end dates, event description and event title/summary
+        /// </summary>
+        /// <param name="ical">Calendar to add event to</param>
+        /// <param name="startDate">Start date/time of event</param>
+        /// <param name="endDate">End date/time of event</param>
+        /// <param name="description">Description of event</param>
+        /// <param name="title">Title of event</param>
         private void addEventToCalendar(iCalendar ical, DateTime startDate, DateTime endDate, string description, string title)
         {
             // Create a blank event with default settings
@@ -431,6 +544,18 @@ namespace TimetableConverter
             evt.UID = uuidValue;
         }
 
+
+        /*
+         * 
+         * ASYNC METHODS
+         * 
+         */
+
+
+        /// <summary>
+        /// Sets main textbox text value Async
+        /// </summary>
+        /// <param name="text">Value to set textbox to</param>
         private void setText(string text)
         {
             if (this.tbxMain.InvokeRequired)
@@ -444,6 +569,10 @@ namespace TimetableConverter
             }
         }
 
+        /// <summary>
+        /// Appends text to main textbox Async
+        /// </summary>
+        /// <param name="text">Value to append to textbox</param>
         private void appendText(string text)
         {
             if (this.tbxMain.InvokeRequired)
@@ -457,6 +586,10 @@ namespace TimetableConverter
             }
         }
 
+        /// <summary>
+        /// Sets whether the "Export" button can be clicked Async
+        /// </summary>
+        /// <param name="enabled">Value of enabled status on button</param>
         private void setButtonEnabled(bool enabled)
         {
             if (this.btnExport.InvokeRequired)
@@ -470,6 +603,10 @@ namespace TimetableConverter
             }
         }
 
+        /// <summary>
+        /// Get's current campus selection Async
+        /// </summary>
+        /// <returns>Current campus selection value</returns>
         private string getCampusSelection()
         {
             if (this.cbxCampus.InvokeRequired)
@@ -480,19 +617,6 @@ namespace TimetableConverter
             else
             {
                 return (string)cbxCampus.SelectedValue;
-            }
-        }
-
-        private void frmTemperatureConversion_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (this.thread != null && this.thread.IsAlive)
-            {
-                thread.Abort();
-            }
-
-            if (this.webClient != null)
-            {
-                webClient.Quit();
             }
         }
     }
