@@ -42,7 +42,7 @@ namespace TimetableConverter
         string file;
 
         // Declare debugging boolean
-        bool debug = true;
+        bool debug = false;
 
 
 
