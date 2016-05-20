@@ -153,7 +153,7 @@
             this.lblCampus.TabIndex = 4;
             this.lblCampus.Text = "&Campus:";
             // 
-            // frmTemperatureConversion
+            // frmTimetableConverter
             // 
             this.AcceptButton = this.btnExport;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -172,9 +172,10 @@
             this.Controls.Add(this.btnExport);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmTemperatureConversion";
+            this.Name = "frmTimetableConverter";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Timetable Converter Form";
+            this.Activated += new System.EventHandler(this.frmTimetableConverter_Activated);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmTemperatureConversion_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();

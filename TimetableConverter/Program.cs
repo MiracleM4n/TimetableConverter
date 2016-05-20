@@ -17,7 +17,6 @@ namespace TimetableConverter
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmTimetableConverter());
-            //Application.Run(new frmDependencyDownloader());
         }
     }
 }

@@ -99,12 +99,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyDownloaderForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DependencyDownloaderForm.Designer.cs">
-      <DependentUpon>DependencyDownloaderForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="TimetableConverterForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -113,9 +107,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="DependencyDownloaderForm.resx">
-      <DependentUpon>DependencyDownloaderForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="TimetableConverterForm.resx">
       <DependentUpon>TimetableConverterForm.cs</DependentUpon>
     </EmbeddedResource>

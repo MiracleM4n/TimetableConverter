@@ -16,6 +16,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.PhantomJS;
 using OpenQA.Selenium.Remote;
 using System.Threading;
+using System.Reflection;
+using System.Net;
 
 namespace TimetableConverter
 {
@@ -27,24 +29,42 @@ namespace TimetableConverter
          * 
          */
 
+
         // Declare WebClient / Service
         RemoteWebDriver webClient;
         DriverService srvc;
 
         // Delcare work Thread
-        Thread thread;
+        Thread scraperThread;
+        Thread downloadThread;
 
         // Declare File to save output to
         string file;
 
         // Declare debugging boolean
-        bool debug = false;
+        bool debug = true;
 
 
 
         /*
          * 
-         * INITIALIZE
+         * ASYNC METHOD DECLARATION
+         * 
+         */
+
+
+        // Declare Async Methods
+        delegate void SetButtonTextCallback(string text);
+        delegate void SetTextCallback(string text);
+        delegate void AppendTextCallback(string text);
+        delegate void ButtonEnableCallback(bool enabled);
+        delegate string CampusSelectionCallback();
+
+
+
+        /*
+         * 
+         * INITIALIZER
          * 
          */
 
@@ -70,21 +90,6 @@ namespace TimetableConverter
             // Set default Dropdown Selection
             cbxCampus.SelectedItem = "Durham College";
         }
-
-
-
-        /*
-         * 
-         * ASYNC METHOD DECLARATION
-         * 
-         */
-
-
-        // Declare Async Methods
-        delegate void SetTextCallback(string text);
-        delegate void AppendTextCallback(string text);
-        delegate void ButtonEnableCallback(bool enabled);
-        delegate string CampusSelection();
 
 
 
@@ -132,26 +137,43 @@ namespace TimetableConverter
         /// <param name="e"></param>
         private void btnExport_Click(object sender, EventArgs e)
         {
-            // Checks if the user has set a output file
-            if (file == null)
+            if (btnExport.Text.Contains("Download"))
             {
-                // If not prompt the user to enter one
-                System.Windows.Forms.MessageBox.Show("You need to select a destination file path first.");
-                // return (Don't start "Work" Thread)
-                return;
+
+                downloadThread = new Thread(new ThreadStart(() => doDownloadWork()));
+
+                // btnExport the output button until "Work" Thread is complete
+                btnExport.Enabled = false;
+
+                // Run the Thread in the background
+                downloadThread.IsBackground = true;
+
+                // Start the thread
+                downloadThread.Start();
             }
+            else
+            {
+                // Checks if the user has set a output file
+                if (file == null)
+                {
+                    // If not prompt the user to enter one
+                    System.Windows.Forms.MessageBox.Show("You need to select a destination file path first.");
+                    // return (Don't start "Work" Thread)
+                    return;
+                }
 
-            // Define the thread variable using a new Thread from current user input
-            thread = new Thread(new ThreadStart(() => doWork()));
+                // Define the thread variable using a new Thread from current user input
+                scraperThread = new Thread(new ThreadStart(() => doScrapingWork()));
 
-            // Disable the output button until "Work" Thread is complete
-            btnExport.Enabled = false;
+                // Disable the output button until "Work" Thread is complete
+                btnExport.Enabled = false;
 
-            // Run the Thread in the background
-            thread.IsBackground = true;
+                // Run the Thread in the background
+                scraperThread.IsBackground = true;
 
-            // Start the thread
-            thread.Start();
+                // Start the thread
+                scraperThread.Start();
+            }
         }
 
         /// <summary>
@@ -162,11 +184,18 @@ namespace TimetableConverter
         /// <param name="e"></param>
         private void frmTemperatureConversion_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // Check if the thread has been initialized and is currently running
-            if (this.thread != null && this.thread.IsAlive)
+            // Check if the scraper thread has been initialized and is currently running
+            if (this.scraperThread != null && this.scraperThread.IsAlive)
             {
                 // Abort the thread if so
-                thread.Abort();
+                scraperThread.Abort();
+            }
+
+            // Check if the download thread has been initialized and is currently running
+            if (this.downloadThread != null && this.downloadThread.IsAlive)
+            {
+                // Abort the thread if so
+                downloadThread.Abort();
             }
 
             // Check if the webClient has been initialized
@@ -174,6 +203,22 @@ namespace TimetableConverter
             {
                 // If so Quit it (Close it)
                 webClient.Quit();
+            }
+        }
+
+        /// <summary>
+        /// Event fired when form has "Activated"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void frmTimetableConverter_Activated(object sender, EventArgs e)
+        {
+            if (!((debug ? checkDependency("chromedriver.exe") : checkDependency("phantomjs.exe"))
+                 && checkDependency("DDay.iCal.dll")
+                 && checkDependency("WebDriver.dll")))
+            {
+                tbxMain.Text = "Dependencies required before this program can be used. Click the download button to download them.";
+                btnExport.Text = "&Download Dependencies";
             }
         }
 
@@ -190,7 +235,7 @@ namespace TimetableConverter
         /// Main "Work" Thread
         /// Does all scraping work. To be used in another Thread to prevent Form locking.
         /// </summary>
-        private void doWork()
+        private void doScrapingWork()
         {
             // Clear output window
             this.setText("");
@@ -468,7 +513,8 @@ namespace TimetableConverter
                         }
 
                         // Create the Events title class name with room number in parentheses
-                        String title = clss + "(" + room.Split(' ')[1] + ")";
+                        String[] classArray = room.Split(' ');
+                        String title = clss + "(" + classArray[classArray.Length - 1] + ")";
                         // Create the Events description each item is on a new line
                         // Includes class name, time of class, room number, teachers name
                         String description = clss + Environment.NewLine + time + Environment.NewLine + room + Environment.NewLine + teacherName;
@@ -519,6 +565,35 @@ namespace TimetableConverter
         }
 
         /// <summary>
+        /// Download "Work" Thread
+        /// Does all dependency downloading work. To be used in another Thread to prevent Form locking.
+        /// </summary>
+        private void doDownloadWork()
+        {
+            this.setText("");
+
+            // Check / Download dependencies as needed
+            if (debug)
+            {
+                this.checkAndDownloadDependency("chromedriver.exe");
+            }
+            else
+            {
+                this.checkAndDownloadDependency("phantomjs.exe");
+            }
+
+            this.checkAndDownloadDependency("DDay.iCal.dll");
+            this.checkAndDownloadDependency("WebDriver.dll");
+
+            this.setText("This utility will scrape the DC / UOIT MyCampus website for Timetable data then export it into a format that is readable by many Calendar programs including Google Calendar. " +
+                    "Enter your DC / UOIT MyCampus login details, select your campus, then select the file location, finally hit the export button.");
+
+            this.setButtonText("&Export my Calendar!");
+
+            this.setButtonEnabled(true);
+        }
+
+        /// <summary>
         // Add event to provided calendar
         /// </summary>
         /// <param name="ical">Calendar to add event to</param>
@@ -549,6 +624,45 @@ namespace TimetableConverter
             evt.UID = uuidValue;
         }
 
+        /// <summary>
+        /// Checks if dependency is available
+        /// </summary>
+        /// <param name="dependency">Dependency to check for</param>
+        /// <returns>Whether the dependency is found or not</returns>
+        private bool checkDependency(string dependency)
+        {
+            return File.Exists(dependency);
+        }
+
+        /// <summary>
+        /// Checks if dependency is available, Downloads it if not
+        /// </summary>
+        /// <param name="dependency">Dependency to check for</param>
+        private void checkAndDownloadDependency(string dependency)
+        {
+            if (!checkDependency(dependency))
+            {
+                System.Net.WebClient downloadClient = new System.Net.WebClient();
+
+                this.appendText("Downloading dependency \"" + dependency + "\".");
+
+                downloadClient.DownloadFile("http://vps.q0r.ca/tc/" + dependency, dependency);
+
+                this.appendText("Dependency \"" + dependency + "\" downloaded successfully!");
+
+                string[] splitName = dependency.Split('.');
+
+                string extension = splitName[splitName.Length - 1];
+
+                if (extension == "dll")
+                {
+                    Assembly assembly = Assembly.LoadFrom(dependency);
+
+                    AppDomain.CurrentDomain.Load(assembly.GetName());
+                }
+            }
+        }
+
 
 
         /*
@@ -557,6 +671,23 @@ namespace TimetableConverter
          * 
          */
 
+
+        /// <summary>
+        /// Sets main button text value Async
+        /// </summary>
+        /// <param name="text">Value to set button text to</param>
+        private void setButtonText(string text)
+        {
+            if (this.btnExport.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(setButtonText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.btnExport.Text = text;
+            }
+        }
 
         /// <summary>
         /// Sets main textbox text value Async
@@ -617,7 +748,7 @@ namespace TimetableConverter
         {
             if (this.cbxCampus.InvokeRequired)
             {
-                CampusSelection d = new CampusSelection(getCampusSelection);
+                CampusSelectionCallback d = new CampusSelectionCallback(getCampusSelection);
                 return (string)this.Invoke(d);
             }
             else
