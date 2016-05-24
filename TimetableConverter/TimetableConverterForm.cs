@@ -35,8 +35,8 @@ namespace TimetableConverter
         DriverService srvc;
 
         // Delcare work Thread
-        Thread scraperThread;
-        Thread downloadThread;
+        BackgroundWorker scraperThread;
+        BackgroundWorker downloadThread;
 
         // Declare File to save output to
         string file;
@@ -140,16 +140,27 @@ namespace TimetableConverter
             if (btnExport.Text.Contains("Download"))
             {
 
-                downloadThread = new Thread(new ThreadStart(() => doDownloadWork()));
+                downloadThread = new BackgroundWorker();
 
-                // btnExport the output button until "Work" Thread is complete
-                btnExport.Enabled = false;
+                downloadThread.DoWork += (s, args) =>
+                {
+                    this.setButtonEnabled(false);
 
-                // Run the Thread in the background
-                downloadThread.IsBackground = true;
+                    doDownloadWork();
+                };
 
-                // Start the thread
-                downloadThread.Start();
+                downloadThread.RunWorkerCompleted += (s, args) =>
+                {
+                    this.setText("This utility will scrape the DC / UOIT MyCampus website for Timetable data then export it into a format that is readable by many Calendar programs including Google Calendar. " +
+                                 "Enter your DC / UOIT MyCampus login details, select your campus, then select the file location, finally hit the export button.\n");
+
+                    this.setButtonText("&Export my Calendar!");
+
+                    this.setButtonEnabled(true);
+                };
+
+                // Start the worker
+                downloadThread.RunWorkerAsync();
             }
             else
             {
@@ -163,16 +174,18 @@ namespace TimetableConverter
                 }
 
                 // Define the thread variable using a new Thread from current user input
-                scraperThread = new Thread(new ThreadStart(() => doScrapingWork()));
+                scraperThread = new BackgroundWorker();
 
-                // Disable the output button until "Work" Thread is complete
-                btnExport.Enabled = false;
+                scraperThread.DoWork += (s, args) =>
+                {
+                    // Disable the output button until "Work" Thread is complete
+                    btnExport.Enabled = false;
 
-                // Run the Thread in the background
-                scraperThread.IsBackground = true;
+                    doScrapingWork();
+                };
 
-                // Start the thread
-                scraperThread.Start();
+                // Start the worker
+                scraperThread.RunWorkerAsync();
             }
         }
 
@@ -185,17 +198,17 @@ namespace TimetableConverter
         private void frmTemperatureConversion_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Check if the scraper thread has been initialized and is currently running
-            if (this.scraperThread != null && this.scraperThread.IsAlive)
+            if (this.scraperThread != null && this.scraperThread.IsBusy)
             {
                 // Abort the thread if so
-                scraperThread.Abort();
+                scraperThread.CancelAsync();
             }
 
             // Check if the download thread has been initialized and is currently running
-            if (this.downloadThread != null && this.downloadThread.IsAlive)
+            if (this.downloadThread != null && this.downloadThread.IsBusy)
             {
                 // Abort the thread if so
-                downloadThread.Abort();
+                downloadThread.CancelAsync();
             }
 
             // Check if the webClient has been initialized
@@ -584,13 +597,6 @@ namespace TimetableConverter
 
             this.checkAndDownloadDependency("DDay.iCal.dll");
             this.checkAndDownloadDependency("WebDriver.dll");
-
-            this.setText("This utility will scrape the DC / UOIT MyCampus website for Timetable data then export it into a format that is readable by many Calendar programs including Google Calendar. " +
-                    "Enter your DC / UOIT MyCampus login details, select your campus, then select the file location, finally hit the export button.");
-
-            this.setButtonText("&Export my Calendar!");
-
-            this.setButtonEnabled(true);
         }
 
         /// <summary>
@@ -644,22 +650,30 @@ namespace TimetableConverter
             {
                 System.Net.WebClient downloadClient = new System.Net.WebClient();
 
-                this.appendText("Downloading dependency \"" + dependency + "\".");
+                this.appendText("Downloading dependency \"" + dependency + "\". \n");
 
-                downloadClient.DownloadFile("http://vps.q0r.ca/tc/" + dependency, dependency);
-
-                this.appendText("Dependency \"" + dependency + "\" downloaded successfully!");
-
-                string[] splitName = dependency.Split('.');
-
-                string extension = splitName[splitName.Length - 1];
-
-                if (extension == "dll")
+                downloadClient.DownloadProgressChanged += (s, e) =>
                 {
-                    Assembly assembly = Assembly.LoadFrom(dependency);
+                    this.appendText(dependency + ": " + e.BytesReceived + " of " + e.TotalBytesToReceive + " bytes. " + e.ProgressPercentage + "% complete. \n");
+                };
 
-                    AppDomain.CurrentDomain.Load(assembly.GetName());
-                }
+                downloadClient.DownloadFileCompleted += (s, e) =>
+                {
+                    this.appendText("Dependency \"" + dependency + "\" downloaded successfully!\n");
+
+                    string[] splitName = dependency.Split('.');
+
+                    string extension = splitName[splitName.Length - 1];
+
+                    if (extension == "dll")
+                    {
+                        Assembly assembly = Assembly.LoadFrom(dependency);
+
+                        AppDomain.CurrentDomain.Load(assembly.GetName());
+                    }
+                };
+
+                downloadClient.DownloadFileAsync(new Uri("http://vps.q0r.ca/tc/" + dependency), dependency);
             }
         }
 
