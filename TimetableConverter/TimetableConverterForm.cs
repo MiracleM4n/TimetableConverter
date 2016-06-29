@@ -179,7 +179,7 @@ namespace TimetableConverter
                 scraperThread.DoWork += (s, args) =>
                 {
                     // Disable the output button until "Work" Thread is complete
-                    btnExport.Enabled = false;
+                    setButtonEnabled(false);
 
                     doScrapingWork();
                 };
